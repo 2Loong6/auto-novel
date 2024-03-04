@@ -107,8 +107,14 @@ const submitGlossary = async () => {
 };
 
 const submitJob = (id: 'gpt' | 'sakura') => {
-  const { startIndex, endIndex, translateExpireChapter, taskNumber, autoTop } =
-    translateOptions.value!!.getTranslationOptions();
+  const {
+    startIndex,
+    endIndex,
+    translateExpireChapter,
+    overriteToc,
+    taskNumber,
+    autoTop,
+  } = translateOptions.value!!.getTranslationOptions();
 
   if (endIndex <= startIndex || startIndex >= total) {
     message.error('排队失败：没有选中章节');
