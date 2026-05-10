@@ -84,13 +84,9 @@ const files = computed(() => {
 });
 
 const updateNovel = () => {
-  if (!CrawlerService.checkAddon()) {
-    message.error('无法更新目录：未检测到Addon');
-    return;
-  }
   return doAction(
     CrawlerService.updateWebNovel(providerId, novelId),
-    '更新小说（伪）',
+    '更新小说',
     message,
   );
 };

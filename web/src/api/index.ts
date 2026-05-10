@@ -17,6 +17,8 @@ export const formatError = async (error: unknown) => {
     return msg;
   } else if (error instanceof TimeoutError) {
     return '请求超时';
+  } else if (error instanceof Error) {
+    return error.message || error.name || '未知错误';
   } else {
     return `${error}`;
   }
