@@ -5,7 +5,6 @@ export type TranslatorId = 'sakura' | 'baidu' | 'youdao' | 'gpt';
 export interface GptWorker {
   id: string;
   endpoint: string;
-  type: 'web' | 'api';
   model: string;
   key: string;
 }
