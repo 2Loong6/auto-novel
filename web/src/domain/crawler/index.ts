@@ -15,12 +15,18 @@ import {
   WebNovelCrawler,
 } from '@auto-novel/crawler';
 
-const getCrawler = () => {
+const getCrawler = async () => {
   if (!window.Addon) return undefined;
+
   const client = ky.create({ fetch: window.Addon.fetch });
+  const hamelnClient = ky.create({
+    fetch: (input: string | URL | Request, init?: RequestInit) =>
+      window.Addon!.tabFetch({ tabUrl: 'https://syosetu.org' }, input, init),
+  });
+
   return new WebNovelCrawler({
     alphapolis: () => new Alphapolis(client),
-    hameln: () => new Hameln(client),
+    hameln: () => new Hameln(hamelnClient),
     kakuyomu: () => new Kakuyomu(client),
     novelup: () => new Novelup(client),
     pixiv: () => new Pixiv(client),
@@ -70,8 +76,8 @@ const toCurrentMutationBody = (novel: WebNovelDto) => ({
 });
 
 const updateWebNovel = async (providerId: string, novelId: string) => {
-  const crawler = getCrawler();
-  if (!crawler) throw new Error('未检测到浏览器扩展');
+  const crawler = await getCrawler();
+  if (!crawler) throw new Error('未检测到浏览器扩展，无法抓取 Hameln');
 
   const metadata = await crawler.getMetadata(providerId, novelId);
   if (metadata == null) throw new Error('未找到小说');
