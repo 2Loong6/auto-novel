@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { BookOutlined, EditNoteOutlined } from '@vicons/material';
+import { BookOutlined, SyncOutlined, EditNoteOutlined } from '@vicons/material';
 import { NA, NText } from 'naive-ui';
 
+import { CrawlerService } from '@/domain/crawler';
 import type { WebNovelDto } from '@/model/WebNovel';
 import { useWhoamiStore } from '@/stores';
 import { WebUtil } from '@/util/web';
 
-import { useIsWideScreen } from '@/pages/util';
+import { doAction, useIsWideScreen } from '@/pages/util';
 
 const props = defineProps<{
   providerId: string;
@@ -18,6 +19,7 @@ const isWideScreen = useIsWideScreen();
 
 const whoamiStore = useWhoamiStore();
 const { whoami } = storeToRefs(whoamiStore);
+const message = useMessage();
 
 const labels = computed(() => {
   const readableNumber = (num: number | undefined) => {
@@ -79,6 +81,14 @@ const latestChapterCreateAt = computed(() => {
   if (createAtList.length === 0) return undefined;
   else return Math.max(...createAtList);
 });
+
+const updateNovel = () => {
+  return doAction(
+    CrawlerService.updateWebNovel(props.providerId, props.novelId),
+    '更新小说',
+    message,
+  );
+};
 </script>
 
 <template>
@@ -104,28 +114,35 @@ const latestChapterCreateAt = computed(() => {
     >
       <c-button
         :label="startReadChapter.type === 'continue' ? '继续阅读' : '开始阅读'"
+        :round="false"
       />
     </router-link>
     <c-button v-else label="开始阅读" disabled />
-
-    <router-link
-      v-if="whoami.hasNovelAccess"
-      :to="`/novel-edit/${providerId}/${novelId}`"
-    >
-      <c-button label="编辑" :icon="EditNoteOutlined" />
-    </router-link>
 
     <favorite-button
       v-model:favored="novel.favored"
       :novel="{ type: 'web', providerId, novelId }"
     />
 
+    <c-button
+      v-if="whoami.hasNovelAccess"
+      label="更新"
+      :round="false"
+      :icon="SyncOutlined"
+      @action="updateNovel()"
+    />
+
+    <router-link
+      v-if="whoami.hasNovelAccess"
+      :to="`/novel-edit/${providerId}/${novelId}`"
+    >
+      <c-button label="编辑" :round="false" :icon="EditNoteOutlined" />
+    </router-link>
+
     <router-link v-if="novel.wenkuId" :to="`/wenku/${novel.wenkuId}`">
-      <c-button label="文库" :icon="BookOutlined" />
+      <c-button label="文库" :round="false" :icon="BookOutlined" />
     </router-link>
   </n-flex>
-
-  <n-divider />
 
   <n-p>{{ labels }}</n-p>
 

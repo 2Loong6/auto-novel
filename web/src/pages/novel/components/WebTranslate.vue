@@ -11,8 +11,6 @@ import {
   useWhoamiStore,
   useWorkspaceStore,
 } from '@/stores';
-import { CrawlerService } from '@/domain/crawler';
-import { doAction } from '@/pages/util';
 
 const props = defineProps<{
   providerId: string;
@@ -80,14 +78,6 @@ const files = computed(() => {
     }),
   };
 });
-
-const updateNovel = () => {
-  return doAction(
-    CrawlerService.updateWebNovel(providerId, novelId),
-    '更新小说',
-    message,
-  );
-};
 
 const importToWorkspace = async () => {
   const blob = await ky.get(files.value.jp.url).blob();
@@ -219,12 +209,6 @@ const submitJob = (id: 'gpt' | 'sakura') => {
         :href="files.zh.url"
         :download="files.zh.filename"
         target="_blank"
-      />
-      <c-button
-        v-if="whoami.hasNovelAccess"
-        label="更新小说"
-        :round="false"
-        @action="updateNovel()"
       />
       <c-button
         label="导入日文至工作区"
