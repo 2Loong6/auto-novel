@@ -229,15 +229,15 @@ const submitJob = (id: 'gpt' | 'sakura') => {
         target="_blank"
       />
       <c-button
+        v-if="whoami.isAdmin"
+        label="更新小说"
+        :round="false"
+        @action="updateNovel()"
+      />
+      <c-button
         label="导入日文至工作区"
         :round="false"
         @action="importToWorkspace"
-      />
-      <c-button
-        v-if="whoami.isAdmin"
-        label="更新目录"
-        :round="false"
-        @action="updateNovel()"
       />
     </n-button-group>
   </n-flex>
