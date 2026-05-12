@@ -21,7 +21,6 @@ const props = defineProps<{
   titleZh?: string;
   total: number;
   jp: number;
-  baidu: number;
   youdao: number;
   gpt: number;
   sakura: number;
@@ -32,7 +31,6 @@ const { providerId, novelId, titleJp, titleZh, total } = props;
 
 const emit = defineEmits<{
   'update:jp': [number];
-  'update:baidu': [number];
   'update:youdao': [number];
   'update:gpt': [number];
 }>();
@@ -47,7 +45,7 @@ const { setting } = storeToRefs(settingStore);
 
 const translateOptions = useTemplateRef('translateOptions');
 const translateTask = useTemplateRef('translateTask');
-const startTranslateTask = (translatorId: 'baidu' | 'youdao') =>
+const startTranslateTask = (translatorId: 'youdao') =>
   translateTask?.value?.startTask(
     { type: 'web', providerId, novelId },
     translateOptions.value!.getTranslateTaskParams(),
@@ -178,18 +176,12 @@ const submitJob = (id: 'gpt' | 'sakura') => {
 
   <n-flex vertical style="margin-top: 16px">
     <n-text>
-      总计 {{ total }} / 百度 {{ baidu }} / 有道 {{ youdao }} / GPT {{ gpt }} /
-      Sakura {{ sakura }}
+      总计 {{ total }} / 有道 {{ youdao }} / GPT {{ gpt }} / Sakura
+      {{ sakura }}
     </n-text>
 
     <template v-if="whoami.isSignedIn && setting.enabledTranslator.length > 0">
       <n-button-group>
-        <c-button
-          v-if="setting.enabledTranslator.includes('baidu')"
-          label="更新百度"
-          :round="false"
-          @action="startTranslateTask('baidu')"
-        />
         <c-button
           v-if="setting.enabledTranslator.includes('youdao')"
           label="更新有道"
@@ -245,7 +237,6 @@ const submitJob = (id: 'gpt' | 'sakura') => {
   <TranslateTask
     ref="translateTask"
     @update:jp="(zh) => emit('update:jp', zh)"
-    @update:baidu="(zh) => emit('update:baidu', zh)"
     @update:youdao="(zh) => emit('update:youdao', zh)"
     @update:gpt="(zh) => emit('update:gpt', zh)"
     style="margin-top: 20px"
