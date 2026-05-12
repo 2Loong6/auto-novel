@@ -1,38 +1,9 @@
-import ky from 'ky';
 import { isEqual } from 'lodash-es';
 
-import { WebNovelApi } from '@/api';
+import type { WebNovelMetadata } from '@/api';
+import { WebNovelCrawlerApi, WebNovelApi } from '@/api';
 import type { WebNovelDto } from '@/model/WebNovel';
 import { WebNovelRepo } from '@/repos';
-import type { WebNovelMetadata } from '@auto-novel/crawler';
-import {
-  Alphapolis,
-  Hameln,
-  Kakuyomu,
-  Novelup,
-  Pixiv,
-  Syosetu,
-  WebNovelCrawler,
-} from '@auto-novel/crawler';
-
-const getCrawler = async () => {
-  if (!window.Addon) return undefined;
-
-  const client = ky.create({ fetch: window.Addon.fetch });
-  const hamelnClient = ky.create({
-    fetch: (input: string | URL | Request, init?: RequestInit) =>
-      window.Addon!.tabFetch({ tabUrl: 'https://syosetu.org' }, input, init),
-  });
-
-  return new WebNovelCrawler({
-    alphapolis: () => new Alphapolis(client),
-    hameln: () => new Hameln(hamelnClient),
-    kakuyomu: () => new Kakuyomu(client),
-    novelup: () => new Novelup(client),
-    pixiv: () => new Pixiv(client),
-    syosetu: () => new Syosetu(client, { concurrency: 2 }),
-  });
-};
 
 const toMutationBody = (metadata: WebNovelMetadata) => ({
   title: metadata.title,
@@ -76,10 +47,7 @@ const toCurrentMutationBody = (novel: WebNovelDto) => ({
 });
 
 const updateWebNovel = async (providerId: string, novelId: string) => {
-  const crawler = await getCrawler();
-  if (!crawler) throw new Error('未检测到浏览器扩展，无法抓取 Hameln');
-
-  const metadata = await crawler.getMetadata(providerId, novelId);
+  const metadata = await WebNovelCrawlerApi.getMetadata(providerId, novelId);
   if (metadata == null) throw new Error('未找到小说');
 
   const body = toMutationBody(metadata);
