@@ -5,12 +5,27 @@ import { WebNovelApi } from '@/api';
 import type { WebNovelDto } from '@/model/WebNovel';
 import { WebNovelRepo } from '@/repos';
 import type { WebNovelMetadata } from '@auto-novel/crawler';
-import { WebNovelCrawler } from '@auto-novel/crawler';
+import {
+  Alphapolis,
+  Hameln,
+  Kakuyomu,
+  Novelup,
+  Pixiv,
+  Syosetu,
+  WebNovelCrawler,
+} from '@auto-novel/crawler';
 
 const getCrawler = () => {
   if (!window.Addon) return undefined;
   const client = ky.create({ fetch: window.Addon.fetch });
-  return new WebNovelCrawler(client);
+  return new WebNovelCrawler({
+    alphapolis: () => new Alphapolis(client),
+    hameln: () => new Hameln(client),
+    kakuyomu: () => new Kakuyomu(client),
+    novelup: () => new Novelup(client),
+    pixiv: () => new Pixiv(client),
+    syosetu: () => new Syosetu(client, { concurrency: 2 }),
+  });
 };
 
 const toMutationBody = (metadata: WebNovelMetadata) => ({
