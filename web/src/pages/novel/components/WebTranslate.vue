@@ -229,7 +229,7 @@ const submitJob = (id: 'gpt' | 'sakura') => {
         target="_blank"
       />
       <c-button
-        v-if="whoami.isAdmin"
+        v-if="whoami.hasNovelAccess"
         label="更新小说"
         :round="false"
         @action="updateNovel()"
