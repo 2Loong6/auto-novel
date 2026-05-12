@@ -1,21 +1,19 @@
 <script lang="ts" setup>
 import { BookOutlined, SyncOutlined, EditNoteOutlined } from '@vicons/material';
-import { NA, NText } from 'naive-ui';
+import { NText } from 'naive-ui';
 
 import { CrawlerService } from '@/domain/crawler';
 import type { WebNovelDto } from '@/model/WebNovel';
 import { useWhoamiStore } from '@/stores';
 import { WebUtil } from '@/util/web';
 
-import { doAction, useIsWideScreen } from '@/pages/util';
+import { doAction } from '@/pages/util';
 
 const props = defineProps<{
   providerId: string;
   novelId: string;
   novel: WebNovelDto;
 }>();
-
-const isWideScreen = useIsWideScreen();
 
 const whoamiStore = useWhoamiStore();
 const { whoami } = storeToRefs(whoamiStore);
@@ -159,20 +157,6 @@ const updateNovel = () => {
     </template>
   </n-p>
 
-  <n-ellipsis
-    :expand-trigger="isWideScreen ? undefined : 'click'"
-    :line-clamp="isWideScreen ? 999 : 5"
-    :tooltip="false"
-    style="word-break: break-all; margin-bottom: 0"
-  >
-    <template v-if="novel.introductionZh !== undefined">
-      {{ novel.introductionZh }}
-      <br />
-      <br />
-    </template>
-    {{ novel.introductionJp }}
-  </n-ellipsis>
-
   <n-flex :size="[4, 4]">
     <router-link
       v-for="attention of novel.attentions.sort()"
@@ -190,4 +174,11 @@ const updateNovel = () => {
       <novel-tag :tag="WebUtil.tryTranslateKeyword(keyword)" />
     </router-link>
   </n-flex>
+
+  <n-divider />
+
+  <web-novel-introduction
+    :introduction-jp="novel.introductionJp"
+    :introduction-zh="novel.introductionZh"
+  />
 </template>
