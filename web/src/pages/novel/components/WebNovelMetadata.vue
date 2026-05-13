@@ -3,7 +3,6 @@ import { BookOutlined, SyncOutlined, EditNoteOutlined } from '@vicons/material';
 import { CrawlerService } from '@/domain/crawler';
 import type { WebNovelDto } from '@/model/WebNovel';
 import { useWhoamiStore } from '@/stores';
-import { WebUtil } from '@/util/web';
 
 import { doAction } from '@/pages/util';
 
@@ -154,27 +153,11 @@ const updateNovel = () => {
     </template>
   </n-p>
 
-  <n-flex :size="[4, 4]">
-    <router-link
-      v-for="attention of novel.attentions.sort()"
-      :key="attention"
-      :to="`/novel?query=${attention}\$`"
-    >
-      <novel-tag :tag="attention" strong />
-    </router-link>
-
-    <router-link
-      v-for="keyword of novel.keywords"
-      :key="keyword"
-      :to="`/novel?query=${keyword}\$`"
-    >
-      <novel-tag :tag="WebUtil.tryTranslateKeyword(keyword)" />
-    </router-link>
-  </n-flex>
+  <WebNovelTags :attentions="novel.attentions" :keywords="novel.keywords" />
 
   <n-divider />
 
-  <web-novel-introduction
+  <WebNovelIntroduction
     :introduction-jp="novel.introductionJp"
     :introduction-zh="novel.introductionZh"
   />
