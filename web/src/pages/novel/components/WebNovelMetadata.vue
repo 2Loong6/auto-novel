@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { BookOutlined, SyncOutlined, EditNoteOutlined } from '@vicons/material';
-import { NText } from 'naive-ui';
-
 import { CrawlerService } from '@/domain/crawler';
 import type { WebNovelDto } from '@/model/WebNovel';
 import { useWhoamiStore } from '@/stores';
@@ -90,13 +88,12 @@ const updateNovel = () => {
 </script>
 
 <template>
-  <n-h3 prefix="bar">
-    <n-a :href="WebUtil.buildNovelUrl(providerId, novelId)">
-      {{ novel.titleJp }}
-    </n-a>
-    <br />
-    <n-text depth="3">{{ novel.titleZh }}</n-text>
-  </n-h3>
+  <web-novel-title
+    :provider-id="providerId"
+    :novel-id="novelId"
+    :title-jp="novel.titleJp"
+    :title-zh="novel.titleZh"
+  />
 
   <n-p v-if="novel.authors.length > 0">
     作者：
